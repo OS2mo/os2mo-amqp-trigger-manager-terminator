@@ -77,6 +77,7 @@ async def initiate_terminator(
 async def engagement_event_handler(
     mo: depends.GraphQLClient,
     engagement_uuid: PayloadUUID,
+    settings: Settings,
     _: RateLimit,
 ):
     # Get all engagement objects related to the engagement-event
@@ -87,9 +88,9 @@ async def engagement_event_handler(
 
     # Go through engagments and collect all unique engagement employee-uuids
     employee_uuids = {
-        employee["uuid"]
+        employee.uuid
         for engagement in engagement_objects
-        for employee in engagement["person"]
+        for employee in engagement.person
     }
 
     # Fetch all manager objects related to the engagement employee-uuids
@@ -114,25 +115,40 @@ async def engagement_event_handler(
         "Found invalid manager periods:",
         manager_invalid_periods=json.dumps(jsonable_encoder(manager_invalid_periods)),
     )
-
     # Terminate invalid manager periods
-    terminated_invalid_manager_periods = await managers.terminate_manager_periods(
-        mo, manager_invalid_periods
-    )
+    if settings.manager_terminator.set_to_vacant:
+        updated_invalid_manager_periods = await managers.update_manager_to_vacant(
+            mo, manager_invalid_periods
+        )
 
-    logger.info(
-        "Terminated invalid periods for manager(s): %s"
-        % json.dumps(jsonable_encoder(terminated_invalid_manager_periods))
-    )
+        logger.info(
+            "Updated invalid periods for manager(s) to vacant: %s"
+            % json.dumps(jsonable_encoder(updated_invalid_manager_periods))
+        )
+    else:
+        terminated_invalid_manager_periods = await managers.terminate_manager_periods(
+            mo, manager_invalid_periods
+        )
+
+        logger.info(
+            "Terminated invalid periods for manager(s): %s"
+            % json.dumps(jsonable_encoder(terminated_invalid_manager_periods))
+        )
 
 
 def create_app() -> FastAPI:
     settings = Settings()
     fastramqpi = FastRAMQPI(
-        application_name="manager_terminator",
+        application_name="os2mo-manager-terminator",
         settings=settings.fastramqpi,
         graphql_version=22,
         graphql_client_cls=GraphQLClient,
     )
+
     fastramqpi.add_context(settings=settings)
-    return fastramqpi
+
+    app = fastramqpi.get_app()
+    mo_amqp_system = fastramqpi.get_amqpsystem()
+    mo_amqp_system.router.registry.update(amqp_router.registry)
+
+    return app

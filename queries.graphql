@@ -10,7 +10,7 @@ query GetManagers {
           uuid
         }
         person {
-          engagements {
+          engagements(filter: {from_date: null, to_date: null}) {
             uuid
             org_unit {
               uuid
@@ -40,10 +40,10 @@ mutation TerminateManager($uuid: UUID!, $terminate_from: DateTime, $terminate_to
   }
 }
 
-mutation UpdateManager($uuid: UUID!, $vacant_from: DateTime!) {
+mutation UpdateManager($uuid: UUID!, $vacant_from: DateTime!, $vacant_to: DateTime) {
   manager_update(input: {
     uuid: $uuid,
-    from: $vacant_from
+    validity: {from: $vacant_from, to: $vacant_to},
     person: null
   }) {
     uuid
@@ -56,7 +56,6 @@ query GetEngagementObjects($engagement_uuid: UUID!) {
       validities {
         org_unit {
           uuid
-          name
         }
         validity {
           from
@@ -64,7 +63,7 @@ query GetEngagementObjects($engagement_uuid: UUID!) {
         }
         person {
           uuid
-          engagements {
+          engagements(filter: {from_date: null, to_date: null}) {
             uuid
             org_unit {
               uuid
@@ -121,7 +120,7 @@ query GetEmployeeManagers($employee_uuids: [UUID!]!) {
           uuid
         }
         person {
-          engagements {
+          engagements(filter: {from_date: null, to_date:null}) {
             uuid
             org_unit {
               uuid

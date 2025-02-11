@@ -5,7 +5,7 @@ from datetime import timedelta
 from datetime import timezone
 from uuid import UUID
 
-NO_ENGAGEMENT_OBJECTS_FOUND = objects = []
+NO_ENGAGEMENT_OBJECTS_FOUND = {"objects": []}
 
 ENGAGEMENT_OBJECTS = {
     "objects": [
@@ -262,39 +262,36 @@ ENGAGEMENT_OBJECTS_MANAGER_AND_ENGAGEMENT_NOT_IN_SAME_ORG_UNIT = {
 }
 
 
-EMPLOYEE_OBJECTS = [
-    {
-        "uuid": "fa5e2af6-ae28-4b6b-8895-3b7d39f93d54",
-        "engagements": [
-            {
-                "uuid": "141c39db-7ce0-4332-b4e4-a4d2114b0f51",
-                "org_unit": [{"uuid": "f06ee470-9f17-566f-acbe-e938112d46d9"}],
-                "validity": {
-                    "from_": "1972-04-27T00:00:00+01:00",
-                    "to": "2023-09-29T00:00:00+02:00",
-                },
-            }
-        ],
-        "manager_roles": [
-            {
-                "uuid": "7c27c18f-9f5f-43c4-bfe0-b87421db4a59",
-                "org_unit": [{"uuid": "f06ee470-9f17-566f-acbe-e938112d46d9"}],
-                "validity": {
-                    "from_": "2006-03-30T00:00:00+02:00",
-                    "to": None,
-                },
-            }
-        ],
-    }
-]
+EMPLOYEE_OBJECTS = {
+    "uuid": "fa5e2af6-ae28-4b6b-8895-3b7d39f93d54",
+    "engagements": [
+        {
+            "uuid": "141c39db-7ce0-4332-b4e4-a4d2114b0f51",
+            "org_unit": [{"uuid": "f06ee470-9f17-566f-acbe-e938112d46d9"}],
+            "validity": {
+                "from_": "1972-04-27T00:00:00+01:00",
+                "to": "2023-09-29T00:00:00+02:00",
+            },
+        }
+    ],
+    "manager_roles": [
+        {
+            "uuid": "7c27c18f-9f5f-43c4-bfe0-b87421db4a59",
+            "org_unit": [{"uuid": "f06ee470-9f17-566f-acbe-e938112d46d9"}],
+            "validity": {
+                "from_": "2006-03-30T00:00:00+02:00",
+                "to": None,
+            },
+        }
+    ],
+}
 
 
-ENGAGEMENT_ORG_UNIT_OBJECTS = [
-    {
-        "uuid": "b6c11152-0645-4712-a207-ba2c53b391ab",
-        "name": "Borgmesterens Afdeling",
-    }
-]
+ENGAGEMENT_ORG_UNIT_OBJECTS = {
+    "uuid": "b6c11152-0645-4712-a207-ba2c53b391ab",
+    "name": "Borgmesterens Afdeling",
+}
+
 
 MANAGER_OBJECTS_FROM_GET_MANAGERS_CALL_NO_ENGAGEMENTS = {
     "objects": [
